@@ -34,7 +34,13 @@ export default function FlightPage() {
     };
 
     const handleSearch = () => {
-        alert('検索機能は次のステップで実装します');
+        // 結果画面に遷移（パラメータを渡す）
+        const params = new URLSearchParams({
+            route: selectedRoute,
+            timing: selectedTiming,
+            timeOfDay: selectedTimeOfDay,
+        });
+        router.push(`/result?${params.toString()}`);
     };
 
     const handleBack = () => {
