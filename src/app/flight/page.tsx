@@ -3,148 +3,185 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-type Route = {
-    from: string;
-    to: string;
-};
+type Step = 'route' | 'timing' | 'timeOfDay' | 'confirm';
 
 export default function FlightPage() {
     const router = useRouter();
-    const [route, setRoute] = useState<Route>({ from: '鹿児島', to: '東京' });
-    const [departure, setDeparture] = useState('');
-    const [timeOfDay, setTimeOfDay] = useState('');
-    const [userLocation, setUserLocation] = useState('');
+    const [step, setStep] = useState<Step>('route');
+    const [selectedRoute, setSelectedRoute] = useState('');
+    const [selectedTiming, setSelectedTiming] = useState('');
+    const [selectedTimeOfDay, setSelectedTimeOfDay] = useState('');
 
     useEffect(() => {
-        // ユーザー設定を読み込み
+        // ユーザー設定を確認
         const settings = localStorage.getItem('otasuke_user_settings');
-        if (settings) {
-            const parsed = JSON.parse(settings);
-            setUserLocation(`${parsed.location.prefecture} ${parsed.location.city}`);
-        } else {
-            // 設定がなければ設定画面へ
+        if (!settings) {
             router.push('/setup');
         }
     }, [router]);
 
+    const handleCardClick = (value: string) => {
+        if (step === 'route') {
+            setSelectedRoute(value);
+            setStep('timing');
+        } else if (step === 'timing') {
+            setSelectedTiming(value);
+            setStep('timeOfDay');
+        } else if (step === 'timeOfDay') {
+            setSelectedTimeOfDay(value);
+            setStep('confirm');
+        }
+    };
+
     const handleSearch = () => {
-        // 検索実行（次のステップで実装）
         alert('検索機能は次のステップで実装します');
     };
 
+    const handleBack = () => {
+        if (step === 'timing') {
+            setStep('route');
+        } else if (step === 'timeOfDay') {
+            setStep('timing');
+        } else if (step === 'confirm') {
+            setStep('timeOfDay');
+        } else {
+            router.push('/');
+        }
+    };
+
+    // ステップごとの質問とカード
+    const getStepContent = () => {
+        switch (step) {
+            case 'route':
+                return {
+                    question: 'どちらに行きますか？',
+                    icon: '✈️',
+                    cards: [
+                        { label: '鹿児島 → 東京', value: '鹿児島→東京', icon: '🌸' },
+                        { label: '東京 → 鹿児島', value: '東京→鹿児島', icon: '🌋' },
+                        { label: '鹿児島 → 大阪', value: '鹿児島→大阪', icon: '🏯' },
+                        { label: 'その他の行き先', value: 'その他', icon: '🗺️' },
+                    ],
+                };
+            case 'timing':
+                return {
+                    question: 'いつ頃行きますか？',
+                    icon: '📅',
+                    cards: [
+                        { label: '来週', value: '来週', icon: '🚀' },
+                        { label: '来月', value: '来月', icon: '📆' },
+                        { label: '3ヶ月後', value: '3ヶ月後', icon: '🗓️' },
+                        { label: 'まだ決まっていない', value: 'まだ決まっていない', icon: '🤔' },
+                    ],
+                };
+            case 'timeOfDay':
+                return {
+                    question: '何時頃がいいですか？',
+                    icon: '🕐',
+                    cards: [
+                        { label: '朝（6-9時）', value: '朝', icon: '🌅' },
+                        { label: '昼（9-15時）', value: '昼', icon: '☀️' },
+                        { label: '夕方（15-18時）', value: '夕方', icon: '🌆' },
+                        { label: 'いつでもいい', value: 'いつでもいい', icon: '⏰' },
+                    ],
+                };
+            default:
+                return null;
+        }
+    };
+
+    const content = getStepContent();
+
+    if (step === 'confirm') {
+        return (
+            <div className="h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">
+                <header className="bg-blue-500 text-white p-6 shadow-lg">
+                    <div className="flex items-center gap-4">
+                        <button onClick={handleBack} className="text-3xl">←</button>
+                        <h1 className="text-4xl font-bold">確認</h1>
+                    </div>
+                </header>
+
+                <main className="flex-1 flex items-center justify-center p-6">
+                    <div className="w-full max-w-md space-y-6">
+                        <div className="bg-white rounded-3xl shadow-2xl p-8 space-y-6">
+                            <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+                                この内容でよろしいですか？
+                            </h2>
+
+                            <div className="space-y-4 text-xl">
+                                <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl">
+                                    <span className="text-3xl">✈️</span>
+                                    <span className="font-semibold">{selectedRoute}</span>
+                                </div>
+                                <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl">
+                                    <span className="text-3xl">📅</span>
+                                    <span className="font-semibold">{selectedTiming}</span>
+                                </div>
+                                <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-xl">
+                                    <span className="text-3xl">🕐</span>
+                                    <span className="font-semibold">{selectedTimeOfDay}</span>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleSearch}
+                                className="w-full min-h-[80px] bg-green-500 hover:bg-green-600 text-white rounded-2xl text-2xl font-bold shadow-lg transition-all"
+                            >
+                                この条件で探す
+                            </button>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen flex flex-col bg-gray-50">
+        <div className="h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">
             {/* ヘッダー */}
             <header className="bg-blue-500 text-white p-6 shadow-lg">
                 <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => router.push('/')}
-                        className="text-3xl hover:bg-blue-600 rounded-lg px-2 transition-colors"
-                    >
-                        ←
-                    </button>
+                    <button onClick={handleBack} className="text-3xl">←</button>
                     <h1 className="text-4xl font-bold">航空券を探す</h1>
                 </div>
             </header>
 
             {/* メインコンテンツ */}
-            <main className="flex-1 p-6 pb-32">
-                <div className="max-w-md mx-auto space-y-8">
+            <main className="flex-1 flex flex-col items-center justify-center p-6">
+                <div className="w-full max-w-2xl">
+                    {/* 質問 */}
+                    <div className="text-center mb-8">
+                        <div className="text-6xl mb-4">{content?.icon}</div>
+                        <h2 className="text-4xl font-bold text-gray-800">
+                            {content?.question}
+                        </h2>
+                    </div>
 
-                    {/* よく使う路線 */}
-                    <section className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">✈️ よく使う路線</h2>
-
-                        <button
-                            onClick={() => setRoute({ from: '鹿児島', to: '東京' })}
-                            className={`w-full p-6 text-xl font-semibold rounded-xl transition-all ${route.from === '鹿児島' && route.to === '東京'
-                                    ? 'bg-blue-500 text-white shadow-md'
-                                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
-                                }`}
-                        >
-                            鹿児島 → 東京・横浜
-                        </button>
-
-                        <button
-                            onClick={() => setRoute({ from: '東京', to: '鹿児島' })}
-                            className={`w-full p-6 text-xl font-semibold rounded-xl transition-all ${route.from === '東京' && route.to === '鹿児島'
-                                    ? 'bg-blue-500 text-white shadow-md'
-                                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
-                                }`}
-                        >
-                            東京・横浜 → 鹿児島
-                        </button>
-                    </section>
-
-                    {/* 出発時期 */}
-                    <section className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">📅 いつ行きますか？</h2>
-
-                        <div className="grid grid-cols-2 gap-3">
-                            {['来週', '2週間後', '来月', '3ヶ月後'].map((option) => (
-                                <button
-                                    key={option}
-                                    onClick={() => setDeparture(option)}
-                                    className={`p-6 text-xl font-semibold rounded-xl transition-all ${departure === option
-                                            ? 'bg-blue-500 text-white shadow-md'
-                                            : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
-                                        }`}
-                                >
-                                    {option}
-                                </button>
-                            ))}
+                    {/* カード（2x2グリッド） */}
+                    <div className="grid grid-cols-2 gap-6">
+                        {content?.cards.map((card) => (
                             <button
-                                onClick={() => setDeparture('まだ決まっていない')}
-                                className={`col-span-2 p-6 text-xl font-semibold rounded-xl transition-all ${departure === 'まだ決まっていない'
-                                        ? 'bg-blue-500 text-white shadow-md'
-                                        : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
-                                    }`}
+                                key={card.value}
+                                onClick={() => handleCardClick(card.value)}
+                                className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 active:scale-95 p-8 min-h-[200px] flex flex-col items-center justify-center gap-4"
                             >
-                                まだ決まっていない
+                                <div className="text-6xl">{card.icon}</div>
+                                <div className="text-2xl font-bold text-gray-800 text-center">
+                                    {card.label}
+                                </div>
                             </button>
-                        </div>
-                    </section>
+                        ))}
+                    </div>
 
-                    {/* 時間帯 */}
-                    <section className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">🕐 時間帯の希望</h2>
-
-                        <div className="space-y-3">
-                            {[
-                                { value: '朝早く', label: '朝早く（6-9時）' },
-                                { value: '午前中', label: '午前中（9-12時）' },
-                                { value: '昼過ぎ', label: '昼過ぎ（12-15時）' },
-                                { value: '夕方', label: '夕方（15-18時）' },
-                                { value: 'いつでもいい', label: 'いつでもいい' },
-                            ].map((option) => (
-                                <button
-                                    key={option.value}
-                                    onClick={() => setTimeOfDay(option.value)}
-                                    className={`w-full p-6 text-xl font-semibold rounded-xl transition-all ${timeOfDay === option.value
-                                            ? 'bg-blue-500 text-white shadow-md'
-                                            : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
-                                        }`}
-                                >
-                                    {option.label}
-                                </button>
-                            ))}
-                        </div>
-                    </section>
+                    {/* プログレスインジケーター */}
+                    <div className="flex justify-center gap-2 mt-8">
+                        <div className={`h-3 w-12 rounded-full ${step === 'route' ? 'bg-blue-500' : 'bg-gray-300'}`} />
+                        <div className={`h-3 w-12 rounded-full ${step === 'timing' ? 'bg-blue-500' : 'bg-gray-300'}`} />
+                        <div className={`h-3 w-12 rounded-full ${step === 'timeOfDay' ? 'bg-blue-500' : 'bg-gray-300'}`} />
+                    </div>
                 </div>
             </main>
-
-            {/* 固定検索ボタン */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 p-6 shadow-lg">
-                <div className="max-w-md mx-auto">
-                    <button
-                        onClick={handleSearch}
-                        disabled={!departure || !timeOfDay}
-                        className="w-full min-h-[80px] bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-2xl shadow-lg text-2xl font-bold transition-all"
-                    >
-                        この条件で探す
-                    </button>
-                </div>
-            </div>
         </div>
     );
 }
