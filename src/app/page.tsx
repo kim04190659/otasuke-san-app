@@ -1,6 +1,23 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 export default function Home() {
+  const router = useRouter();
+
+  const handleFlightSearch = () => {
+    // ユーザー設定をチェック
+    const userSettings = localStorage.getItem('otasuke_user_settings');
+
+    if (userSettings) {
+      // 設定済み → 航空券検索へ
+      router.push('/flight');
+    } else {
+      // 未設定 → 設定画面へ
+      router.push('/setup');
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* ヘッダー */}
@@ -23,7 +40,7 @@ export default function Home() {
 
           {/* 航空券ボタン */}
           <button
-            onClick={() => alert('航空券検索機能は次のステップで実装します')}
+            onClick={handleFlightSearch}
             className="w-full min-h-[100px] bg-blue-500 hover:bg-blue-600 text-white rounded-2xl shadow-lg text-2xl font-bold transition-all active:scale-95"
           >
             <div className="flex items-center justify-center gap-3">
