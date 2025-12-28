@@ -57,32 +57,22 @@ export default function FlightPage() {
 
                         <button
                             onClick={() => setRoute({ from: '鹿児島', to: '東京' })}
-                            className={`w-full p-4 text-xl font-bold rounded-xl border-4 transition-all ${route.from === '鹿児島' && route.to === '東京'
-                                    ? 'bg-blue-500 text-white border-blue-600 shadow-xl scale-105'
-                                    : 'bg-white text-gray-800 border-gray-300 hover:border-blue-300'
+                            className={`w-full p-5 text-xl font-semibold rounded-xl transition-all ${route.from === '鹿児島' && route.to === '東京'
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                                 }`}
                         >
-                            <div className="flex items-center justify-between">
-                                <span>鹿児島 → 東京・横浜</span>
-                                {route.from === '鹿児島' && route.to === '東京' && (
-                                    <span className="text-2xl">✓</span>
-                                )}
-                            </div>
+                            鹿児島 → 東京・横浜
                         </button>
 
                         <button
                             onClick={() => setRoute({ from: '東京', to: '鹿児島' })}
-                            className={`w-full p-4 text-xl font-bold rounded-xl border-4 transition-all ${route.from === '東京' && route.to === '鹿児島'
-                                    ? 'bg-blue-500 text-white border-blue-600 shadow-xl scale-105'
-                                    : 'bg-white text-gray-800 border-gray-300 hover:border-blue-300'
+                            className={`w-full p-5 text-xl font-semibold rounded-xl transition-all ${route.from === '東京' && route.to === '鹿児島'
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                                 }`}
                         >
-                            <div className="flex items-center justify-between">
-                                <span>東京・横浜 → 鹿児島</span>
-                                {route.from === '東京' && route.to === '鹿児島' && (
-                                    <span className="text-2xl">✓</span>
-                                )}
-                            </div>
+                            東京・横浜 → 鹿児島
                         </button>
                     </section>
 
@@ -90,22 +80,28 @@ export default function FlightPage() {
                     <section className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
                         <h2 className="text-2xl font-bold text-gray-800">📅 いつ行きますか？</h2>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            {['来週', '2週間後', '来月', '3ヶ月後', 'まだ決まっていない'].map((option) => (
+                        <div className="grid grid-cols-2 gap-3">
+                            {['来週', '2週間後', '来月', '3ヶ月後'].map((option) => (
                                 <button
                                     key={option}
                                     onClick={() => setDeparture(option)}
-                                    className={`p-4 text-xl font-bold rounded-xl border-4 transition-all ${departure === option
-                                            ? 'bg-blue-500 text-white border-blue-600 shadow-xl scale-105'
-                                            : 'bg-white text-gray-800 border-gray-300 hover:border-blue-300'
-                                        } ${option === 'まだ決まっていない' ? 'col-span-2' : ''}`}
+                                    className={`p-5 text-xl font-semibold rounded-xl transition-all ${departure === option
+                                            ? 'bg-blue-500 text-white'
+                                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                        }`}
                                 >
-                                    <div className="flex items-center justify-center gap-2">
-                                        <span>{option}</span>
-                                        {departure === option && <span className="text-2xl">✓</span>}
-                                    </div>
+                                    {option}
                                 </button>
                             ))}
+                            <button
+                                onClick={() => setDeparture('まだ決まっていない')}
+                                className={`col-span-2 p-5 text-xl font-semibold rounded-xl transition-all ${departure === 'まだ決まっていない'
+                                        ? 'bg-blue-500 text-white'
+                                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                    }`}
+                            >
+                                まだ決まっていない
+                            </button>
                         </div>
                     </section>
 
@@ -124,17 +120,12 @@ export default function FlightPage() {
                                 <button
                                     key={option.value}
                                     onClick={() => setTimeOfDay(option.value)}
-                                    className={`w-full p-4 text-xl font-bold rounded-xl border-4 transition-all ${timeOfDay === option.value
-                                            ? 'bg-blue-500 text-white border-blue-600 shadow-xl scale-105'
-                                            : 'bg-white text-gray-800 border-gray-300 hover:border-blue-300'
+                                    className={`w-full p-5 text-xl font-semibold rounded-xl transition-all ${timeOfDay === option.value
+                                            ? 'bg-blue-500 text-white'
+                                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                                         }`}
                                 >
-                                    <div className="flex items-center justify-between">
-                                        <span>{option.label}</span>
-                                        {timeOfDay === option.value && (
-                                            <span className="text-2xl">✓</span>
-                                        )}
-                                    </div>
+                                    {option.label}
                                 </button>
                             ))}
                         </div>
@@ -144,7 +135,7 @@ export default function FlightPage() {
                     <button
                         onClick={handleSearch}
                         disabled={!departure || !timeOfDay}
-                        className="w-full min-h-[80px] bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-2xl shadow-lg text-2xl font-bold transition-all active:scale-95"
+                        className="w-full min-h-[80px] bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-2xl shadow-lg text-2xl font-bold transition-all"
                     >
                         この条件で探す
                     </button>
