@@ -48,18 +48,18 @@ export default function FlightPage() {
             </header>
 
             {/* メインコンテンツ */}
-            <main className="flex-1 p-6">
-                <div className="max-w-md mx-auto space-y-6">
+            <main className="flex-1 p-6 pb-32">
+                <div className="max-w-md mx-auto space-y-8">
 
                     {/* よく使う路線 */}
                     <section className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-800">✈️ よく使う路線</h2>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">✈️ よく使う路線</h2>
 
                         <button
                             onClick={() => setRoute({ from: '鹿児島', to: '東京' })}
-                            className={`w-full p-5 text-xl font-semibold rounded-xl transition-all ${route.from === '鹿児島' && route.to === '東京'
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                            className={`w-full p-6 text-xl font-semibold rounded-xl transition-all ${route.from === '鹿児島' && route.to === '東京'
+                                    ? 'bg-blue-500 text-white shadow-md'
+                                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
                                 }`}
                         >
                             鹿児島 → 東京・横浜
@@ -67,9 +67,9 @@ export default function FlightPage() {
 
                         <button
                             onClick={() => setRoute({ from: '東京', to: '鹿児島' })}
-                            className={`w-full p-5 text-xl font-semibold rounded-xl transition-all ${route.from === '東京' && route.to === '鹿児島'
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                            className={`w-full p-6 text-xl font-semibold rounded-xl transition-all ${route.from === '東京' && route.to === '鹿児島'
+                                    ? 'bg-blue-500 text-white shadow-md'
+                                    : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
                                 }`}
                         >
                             東京・横浜 → 鹿児島
@@ -78,16 +78,16 @@ export default function FlightPage() {
 
                     {/* 出発時期 */}
                     <section className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-800">📅 いつ行きますか？</h2>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">📅 いつ行きますか？</h2>
 
                         <div className="grid grid-cols-2 gap-3">
                             {['来週', '2週間後', '来月', '3ヶ月後'].map((option) => (
                                 <button
                                     key={option}
                                     onClick={() => setDeparture(option)}
-                                    className={`p-5 text-xl font-semibold rounded-xl transition-all ${departure === option
-                                            ? 'bg-blue-500 text-white'
-                                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                    className={`p-6 text-xl font-semibold rounded-xl transition-all ${departure === option
+                                            ? 'bg-blue-500 text-white shadow-md'
+                                            : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
                                         }`}
                                 >
                                     {option}
@@ -95,9 +95,9 @@ export default function FlightPage() {
                             ))}
                             <button
                                 onClick={() => setDeparture('まだ決まっていない')}
-                                className={`col-span-2 p-5 text-xl font-semibold rounded-xl transition-all ${departure === 'まだ決まっていない'
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                className={`col-span-2 p-6 text-xl font-semibold rounded-xl transition-all ${departure === 'まだ決まっていない'
+                                        ? 'bg-blue-500 text-white shadow-md'
+                                        : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
                                     }`}
                             >
                                 まだ決まっていない
@@ -107,7 +107,7 @@ export default function FlightPage() {
 
                     {/* 時間帯 */}
                     <section className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-800">🕐 時間帯の希望</h2>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">🕐 時間帯の希望</h2>
 
                         <div className="space-y-3">
                             {[
@@ -120,9 +120,9 @@ export default function FlightPage() {
                                 <button
                                     key={option.value}
                                     onClick={() => setTimeOfDay(option.value)}
-                                    className={`w-full p-5 text-xl font-semibold rounded-xl transition-all ${timeOfDay === option.value
-                                            ? 'bg-blue-500 text-white'
-                                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                    className={`w-full p-6 text-xl font-semibold rounded-xl transition-all ${timeOfDay === option.value
+                                            ? 'bg-blue-500 text-white shadow-md'
+                                            : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
                                         }`}
                                 >
                                     {option.label}
@@ -130,8 +130,12 @@ export default function FlightPage() {
                             ))}
                         </div>
                     </section>
+                </div>
+            </main>
 
-                    {/* 検索ボタン */}
+            {/* 固定検索ボタン */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 p-6 shadow-lg">
+                <div className="max-w-md mx-auto">
                     <button
                         onClick={handleSearch}
                         disabled={!departure || !timeOfDay}
@@ -140,7 +144,7 @@ export default function FlightPage() {
                         この条件で探す
                     </button>
                 </div>
-            </main>
+            </div>
         </div>
     );
 }
