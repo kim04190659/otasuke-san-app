@@ -86,8 +86,11 @@ web_search機能を使って、最新の価格情報を検索してください�
             .map((block: any) => ('text' in block ? block.text : ''))
             .join('\n');
 
+        // 引用タグを削除
+        const cleanedText = textContent.replace(/<cite[^>]*>|<\/cite>/g, '');
+
         // JSONを抽出してパース
-        const jsonMatch = textContent.match(/\{[\s\S]*\}/);
+        const jsonMatch = cleanedText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
             const parsed = JSON.parse(jsonMatch[0]);
             return {
