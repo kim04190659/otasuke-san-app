@@ -44,7 +44,7 @@ function ResultPageContent() {
 
                 if (settings) {
                     const parsed = JSON.parse(settings);
-                    userLocation = `${parsed.location.prefecture} ${parsed.location.city}`;
+                    userLocation = `${parsed.location.prefecture} ${parsed.location.city} ${parsed.location.town || ''}`;
                     ageGroup = parsed.ageGroup;
                 }
 
