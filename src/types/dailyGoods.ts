@@ -1,4 +1,4 @@
-export type Product = 
+export type Product =
   | 'トイレットペーパー'
   | 'ティッシュペーパー'
   | 'キッチンペーパー'
@@ -15,11 +15,16 @@ export type Product =
   | 'ゴミ袋'
   | 'ラップ・アルミホイル';
 
-export type PurchasePriority = 
+export type PurchasePriority =
   | '一番安い'
   | 'いつもの店'
   | '近いお店'
   | '評判が良い';
+
+export type TransportMethod =
+  | '徒歩'
+  | '自転車'
+  | '車';
 
 export interface DailyGoodsSearchRequest {
   product: Product;
