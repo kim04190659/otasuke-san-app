@@ -7,98 +7,147 @@ export default function SetupPage() {
     const router = useRouter();
     const [prefecture, setPrefecture] = useState('鹿児島県');
     const [city, setCity] = useState('指宿市');
+    const [town, setTown] = useState('大牟礼');
+    const [transport, setTransport] = useState<'徒歩' | '自転車' | '車'>('自転車');
     const [ageGroup, setAgeGroup] = useState<'60代' | '70代' | '80代' | '90代'>('80代');
 
     const handleSubmit = () => {
-        // ローカルストレージに保存
-        const userSettings = {
-            location: { prefecture, city },
+        const settings = {
+            location: {
+                prefecture,
+                city,
+                town,
+            },
+            transport,
             ageGroup,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
         };
-        localStorage.setItem('otasuke_user_settings', JSON.stringify(userSettings));
 
-        // 航空券検索画面へ遷移
-        router.push('/flight');
+        localStorage.setItem('otasuke_user_settings', JSON.stringify(settings));
+        router.push('/');
     };
 
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
-            {/* ヘッダー */}
             <header className="bg-blue-500 text-white p-6 shadow-lg">
-                <h1 className="text-4xl font-bold text-center">お助けさん</h1>
+                <h1 className="text-4xl font-bold text-center">初期設定</h1>
             </header>
 
-            {/* メインコンテンツ */}
             <main className="flex-1 flex flex-col items-center justify-center p-6">
-                <div className="w-full max-w-md space-y-8">
-                    <div className="text-center mb-8">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                            初めまして！
-                        </h2>
-                        <p className="text-xl text-gray-600">
-                            あなたのことを教えてください
-                        </p>
+                <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8 space-y-6">
+                    <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+                        あなたの情報を教えてください
+                    </h2>
+
+                    {/* 都道府県 */}
+                    <div>
+                        <label className="block text-xl font-semibold text-gray-700 mb-3">
+                            都道府県
+                        </label>
+                        <select
+                            value={prefecture}
+                            onChange={(e) => setPrefecture(e.target.value)}
+                            className="w-full p-4 text-xl border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                        >
+                            <option>鹿児島県</option>
+                            <option>東京都</option>
+                            <option>神奈川県</option>
+                            <option>大阪府</option>
+                        </select>
                     </div>
 
-                    {/* 地域選択 */}
-                    <section className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-                        <h3 className="text-2xl font-bold text-gray-800">📍 お住まいの地域</h3>
+                    {/* 市区町村 */}
+                    <div>
+                        <label className="block text-xl font-semibold text-gray-700 mb-3">
+                            市区町村
+                        </label>
+                        <input
+                            type="text"
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            placeholder="例：指宿市"
+                            className="w-full p-4 text-xl border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                        />
+                    </div>
 
-                        <div>
-                            <label className="block text-xl text-gray-700 mb-2">都道府県</label>
-                            <select
-                                value={prefecture}
-                                onChange={(e) => setPrefecture(e.target.value)}
-                                className="w-full p-4 text-xl border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                    {/* 町名（新規） */}
+                    <div>
+                        <label className="block text-xl font-semibold text-gray-700 mb-3">
+                            町名
+                        </label>
+                        <input
+                            type="text"
+                            value={town}
+                            onChange={(e) => setTown(e.target.value)}
+                            placeholder="例：大牟礼"
+                            className="w-full p-4 text-xl border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
+                        />
+                    </div>
+
+                    {/* 移動手段（新規） */}
+                    <div>
+                        <label className="block text-xl font-semibold text-gray-700 mb-3">
+                            いつもの移動手段
+                        </label>
+                        <div className="space-y-3">
+                            <button
+                                onClick={() => setTransport('徒歩')}
+                                className={`w-full p-4 text-xl font-semibold rounded-xl transition-all ${transport === '徒歩'
+                                        ? 'bg-blue-500 text-white shadow-md'
+                                        : 'bg-white text-gray-700 border-2 border-gray-200'
+                                    }`}
                             >
-                                <option value="鹿児島県">鹿児島県</option>
-                                <option value="東京都">東京都</option>
-                                <option value="神奈川県">神奈川県</option>
-                                <option value="大阪府">大阪府</option>
-                                <option value="福岡県">福岡県</option>
-                            </select>
+                                🚶 徒歩（500m以内）
+                            </button>
+                            <button
+                                onClick={() => setTransport('自転車')}
+                                className={`w-full p-4 text-xl font-semibold rounded-xl transition-all ${transport === '自転車'
+                                        ? 'bg-blue-500 text-white shadow-md'
+                                        : 'bg-white text-gray-700 border-2 border-gray-200'
+                                    }`}
+                            >
+                                🚲 自転車（2-3km以内）
+                            </button>
+                            <button
+                                onClick={() => setTransport('車')}
+                                className={`w-full p-4 text-xl font-semibold rounded-xl transition-all ${transport === '車'
+                                        ? 'bg-blue-500 text-white shadow-md'
+                                        : 'bg-white text-gray-700 border-2 border-gray-200'
+                                    }`}
+                            >
+                                🚗 車（制限なし）
+                            </button>
                         </div>
+                    </div>
 
-                        <div>
-                            <label className="block text-xl text-gray-700 mb-2">市区町村</label>
-                            <input
-                                type="text"
-                                value={city}
-                                onChange={(e) => setCity(e.target.value)}
-                                className="w-full p-4 text-xl border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none"
-                                placeholder="例：指宿市"
-                            />
-                        </div>
-                    </section>
-
-                    {/* 年齢層選択 */}
-                    <section className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-                        <h3 className="text-2xl font-bold text-gray-800">👤 年齢層</h3>
-
-                        <div className="grid grid-cols-2 gap-4">
+                    {/* 年齢層 */}
+                    <div>
+                        <label className="block text-xl font-semibold text-gray-700 mb-3">
+                            年齢層
+                        </label>
+                        <div className="grid grid-cols-2 gap-3">
                             {(['60代', '70代', '80代', '90代'] as const).map((age) => (
                                 <button
                                     key={age}
                                     onClick={() => setAgeGroup(age)}
-                                    className={`p-4 text-xl font-semibold rounded-xl border-2 transition-all ${ageGroup === age
-                                            ? 'bg-blue-500 text-white border-blue-500'
-                                            : 'bg-white text-gray-800 border-gray-300 hover:border-blue-300'
+                                    className={`p-4 text-xl font-semibold rounded-xl transition-all ${ageGroup === age
+                                            ? 'bg-blue-500 text-white shadow-md'
+                                            : 'bg-white text-gray-700 border-2 border-gray-200'
                                         }`}
                                 >
                                     {age}
                                 </button>
                             ))}
                         </div>
-                    </section>
+                    </div>
 
-                    {/* 次へボタン */}
+                    {/* 保存ボタン */}
                     <button
                         onClick={handleSubmit}
-                        className="w-full min-h-[80px] bg-blue-500 hover:bg-blue-600 text-white rounded-2xl shadow-lg text-2xl font-bold transition-all active:scale-95"
+                        className="w-full min-h-[70px] bg-blue-500 hover:bg-blue-600 text-white rounded-2xl text-2xl font-bold shadow-lg transition-all"
                     >
-                        次へ進む →
+                        この内容で保存
                     </button>
                 </div>
             </main>
