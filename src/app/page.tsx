@@ -101,7 +101,13 @@ export default function Home() {
       </main>
 
       <footer className="bg-white border-t border-gray-200 p-4 text-center">
-        <p className="text-gray-500">お助けさん v1.0</p>
+        <p className="text-gray-500 mb-2">お助けさん v1.0</p>
+        <button
+          onClick={() => router.push('/admin/daily-deals')}
+          className="text-sm text-gray-400 hover:text-gray-600 underline"
+        >
+          管理者用
+        </button>
       </footer>
     </div>
   );
