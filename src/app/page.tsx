@@ -1,9 +1,20 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const router = useRouter();
+  const [currentUser, setCurrentUser] = useState('');
+
+  useEffect(() => {
+    // 現在の設定を読み込み
+    const settings = localStorage.getItem('otasuke_user_settings');
+    if (settings) {
+      const parsed = JSON.parse(settings);
+      setCurrentUser(`${parsed.location.city} ${parsed.location.town}`);
+    }
+  }, []);
 
   const handleFlightSearch = () => {
     const userSettings = localStorage.getItem('otasuke_user_settings');
@@ -23,10 +34,28 @@ export default function Home() {
     }
   };
 
+  const handleSettings = () => {
+    router.push('/setup');
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-blue-500 text-white p-6 shadow-lg">
-        <h1 className="text-4xl font-bold text-center">お助けさん</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-4xl font-bold">お助けさん</h1>
+          <button
+            onClick={handleSettings}
+            className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-xl p-3 transition-all"
+            title="設定"
+          >
+            <span className="text-3xl">⚙️</span>
+          </button>
+        </div>
+        {currentUser && (
+          <p className="text-lg mt-2 opacity-90">
+            現在の設定: {currentUser}
+          </p>
+        )}
       </header>
 
       <main className="flex-1 flex flex-col items-center justify-center p-6 bg-gray-50">
@@ -47,7 +76,7 @@ export default function Home() {
             </div>
           </button>
 
-          {/* 日用品ボタン（新規） */}
+          {/* 日用品ボタン */}
           <button
             onClick={handleDailyGoodsSearch}
             className="w-full min-h-[100px] bg-green-500 hover:bg-green-600 text-white rounded-2xl shadow-lg text-2xl font-bold transition-all active:scale-95"
