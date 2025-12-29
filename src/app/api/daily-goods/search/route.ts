@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { searchDailyGoods } from '@/lib/dailyGoods';
-import { Product, PurchasePriority } from '@/types/dailyGoods';
+import { Product, PurchasePriority, TransportMethod } from '@/types/dailyGoods';
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { product, priority, userLocation, ageGroup } = body;
+        const { product, priority, userLocation, transport, ageGroup } = body;
 
         // バリデーション
         if (!product || !priority) {
@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
             product: product as Product,
             priority: priority as PurchasePriority,
             userLocation: userLocation || '不明',
+            transport: transport as TransportMethod || '自転車',
             ageGroup: ageGroup || '80代',
         });
 
