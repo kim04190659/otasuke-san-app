@@ -30,6 +30,7 @@ export interface DailyGoodsSearchRequest {
   product: Product;
   priority: PurchasePriority;
   userLocation: string;
+  transport: TransportMethod;
   ageGroup: string;
 }
 
