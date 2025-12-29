@@ -26,11 +26,13 @@ function DailyResultPageContent() {
                 // ユーザー設定を取得
                 const settings = localStorage.getItem('otasuke_user_settings');
                 let userLocation = '不明';
+                let transport = '自転車';
                 let ageGroup = '80代';
 
                 if (settings) {
                     const parsed = JSON.parse(settings);
-                    userLocation = `${parsed.location.prefecture} ${parsed.location.city}`;
+                    userLocation = `${parsed.location.prefecture} ${parsed.location.city} ${parsed.location.town || ''}`;
+                    transport = parsed.transport || '自転車';
                     ageGroup = parsed.ageGroup;
                 }
 
@@ -42,6 +44,7 @@ function DailyResultPageContent() {
                         product,
                         priority,
                         userLocation,
+                        transport,
                         ageGroup,
                     }),
                 });
