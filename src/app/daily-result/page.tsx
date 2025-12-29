@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { DailyGoodsSearchResponse } from '@/types/dailyGoods';
+import { sendToEchoShow } from '@/lib/alexa-mock';
 
 function DailyResultPageContent() {
     const router = useRouter();
@@ -10,6 +11,8 @@ function DailyResultPageContent() {
     const [result, setResult] = useState<DailyGoodsSearchResponse | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [sending, setSending] = useState(false);
+    const [sendSuccess, setSendSuccess] = useState<'mother' | 'gibo' | null>(null);
 
     useEffect(() => {
         const fetchResult = async () => {
@@ -66,6 +69,34 @@ function DailyResultPageContent() {
 
         fetchResult();
     }, [searchParams]);
+
+    const handleSendToEchoShow = async (userId: 'mother' | 'gibo') => {
+        if (!result) return;
+        setSending(true);
+        setSendSuccess(null);
+
+        try {
+            // メッセージを整形
+            const title = result.recommendation.productName;
+            const message = `
+${result.recommendation.productName}の情報です。
+
+お店: ${result.stores[0]?.name || '情報なし'}
+価格: ${result.stores[0]?.price || '情報なし'}
+距離: ${result.stores[0]?.distance || '情報なし'}
+
+お買い物の参考にしてください。
+        `.trim();
+
+            await sendToEchoShow(userId, title, message);
+            setSendSuccess(userId);
+        } catch (error) {
+            console.error('送信エラー:', error);
+            alert('送信に失敗しました。もう一度お試しください。');
+        } finally {
+            setSending(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -200,6 +231,67 @@ function DailyResultPageContent() {
                             </ul>
                         </section>
                     )}
+
+                    {/* Echo Showに送信 */}
+                    <section className="bg-blue-50 rounded-3xl shadow-xl p-8">
+                        <h2 className="text-3xl font-bold text-gray-800 mb-4 flex items-center gap-3">
+                            <span>📱</span> Echo Showに送信
+                        </h2>
+
+                        <p className="text-xl text-gray-600 mb-6">
+                            検索結果をお母様や義母様のEcho Showに送ってあげましょう
+                        </p>
+
+                        <div className="space-y-4">
+                            {/* お母様用ボタン */}
+                            <button
+                                onClick={() => handleSendToEchoShow('mother')}
+                                disabled={sending}
+                                className="w-full min-h-[80px] bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 text-white rounded-2xl text-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-3 active:scale-95"
+                            >
+                                {sending ? (
+                                    <span>送信中...</span>
+                                ) : sendSuccess === 'mother' ? (
+                                    <>
+                                        <span>✅</span>
+                                        <span>送信完了！</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>👵</span>
+                                        <span>お母様のEcho Show（指宿）</span>
+                                    </>
+                                )}
+                            </button>
+
+                            {/* 義母様用ボタン */}
+                            <button
+                                onClick={() => handleSendToEchoShow('gibo')}
+                                disabled={sending}
+                                className="w-full min-h-[80px] bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white rounded-2xl text-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-3 active:scale-95"
+                            >
+                                {sending ? (
+                                    <span>送信中...</span>
+                                ) : sendSuccess === 'gibo' ? (
+                                    <>
+                                        <span>✅</span>
+                                        <span>送信完了！</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>👵</span>
+                                        <span>義母様のEcho Show（旭川）</span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+
+                        {sendSuccess && (
+                            <div className="mt-4 p-4 bg-green-100 text-green-800 rounded-xl text-center text-xl font-bold animate-bounce">
+                                ✅ 送信しました！
+                            </div>
+                        )}
+                    </section>
 
                     {/* アクションボタン */}
                     <div className="grid grid-cols-2 gap-4 pt-4">
